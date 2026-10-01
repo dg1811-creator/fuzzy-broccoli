@@ -3,376 +3,455 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gel Coat Tinting Calculator & Coverage Tool</title>
+  <title>Gel Coat & Tint Calculator</title>
   <style>
     :root {
-      --bg: #f4f6f8;
+      --bg-color: #f4f6f8;
       --card-bg: #ffffff;
-      --border: #e2e8f0;
-      --primary: #2563eb;
-      --text: #1e293b;
-      --text-muted: #64748b;
+      --text-color: #333333;
+      --border-color: #dddddd;
+      --accent-color: #0066cc;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 24px; }
-    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-    h1 { text-align: center; font-size: 1.5rem; margin-bottom: 10px; color: #0f172a; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .card-full { grid-column: span 2; }
-    .card-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 16px; border-bottom: 2px solid var(--bg); padding-bottom: 8px; }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
 
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
-    input[type="number"], select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+    h1 {
+      font-size: 1.4rem;
+      margin-top: 0;
+      margin-bottom: 16px;
+      text-align: center;
+    }
 
-    .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .color-swatch { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.15); }
-    .color-label { width: 60px; font-weight: 600; font-size: 0.9rem; }
-    .slider-container { flex-grow: 1; display: flex; align-items: center; gap: 10px; }
-    input[type="range"] { flex-grow: 1; cursor: pointer; accent-color: var(--primary); }
-    .pct-display { width: 45px; text-align: right; font-weight: 600; font-size: 0.9rem; }
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--accent-color);
+      border-bottom: 2px solid #eef2f5;
+      padding-bottom: 6px;
+    }
 
-    .color-preview { width: 100%; height: 60px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 12px; transition: background-color 0.15s ease; }
-    .analysis-text { font-size: 0.9rem; margin-bottom: 6px; }
+    .section {
+      margin-bottom: 24px;
+      background: #fafafa;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
 
-    .results-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .results-table td { padding: 6px 0; }
-    .results-table tr:not(:last-child) { border-bottom: 1px dashed var(--border); }
-    .val-col { text-align: right; font-weight: 600; }
-    .highlight-row { background: #f1f5f9; font-weight: 700; color: #1e293b; }
-    .highlight-row td { padding: 8px 4px; }
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
 
-    .btn-group { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
-    button { padding: 8px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-secondary { background: #e2e8f0; color: #334155; }
-    .btn-secondary:hover { background: #cbd5e1; }
+    .input-field {
+      flex: 1;
+    }
 
-    .temp-hint { font-size: 0.8rem; color: #2563eb; margin-top: 4px; font-weight: 500; }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .slider-group {
+      margin-bottom: 14px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .color-bar {
+      height: 8px;
+      width: 100%;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .bar-white { background: linear-gradient(to right, #f4f6f8, #ffffff); }
+    .bar-black { background: linear-gradient(to right, #e0e0e0, #000000); }
+    .bar-yellow { background: linear-gradient(to right, #fffdf0, #ffd700); }
+    .bar-brown { background: linear-gradient(to right, #fdf8f5, #8b4513); }
+    .bar-blue { background: linear-gradient(to right, #f0f4f8, #0055ff); }
+    .bar-red { background: linear-gradient(to right, #fcf0f0, #cc0000); }
+
+    .color-sample-box {
+      width: 100%;
+      height: 70px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      margin-top: 8px;
+      transition: background-color 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #333;
+      text-shadow: 0 0 4px rgba(255,255,255,0.8);
+    }
+
+    .results {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid #eeeeee;
+      font-size: 0.9rem;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-weight: 700;
+      color: #111;
+    }
+
+    .highlight-value {
+      color: var(--accent-color);
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Gel Coat Tinting Calculator and Mixer Tool</h1>
+  <div class="container">
+    <h1>Gel Coat Tool</h1>
 
-  <!-- Section 1: Surface Area & Hull Temperature Setup -->
-  <div class="card card-full">
-    <div class="card-title">1. Coverage, Hull Temp & Project Base</div>
-    
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
-      <div class="form-group">
-        <label>Surface Area (Sq. Ft.)</label>
-        <input type="number" id="surfaceArea" value="10" min="0.1" step="0.5" oninput="calculate()">
+    <!-- 1. AREA & GEL COAT AMOUNT CALCULATOR -->
+    <div class="section">
+      <h2>1. Coverage Calculator</h2>
+      <div class="input-row">
+        <div class="input-field">
+          <label for="length">Length (Inches):</label>
+          <input type="number" id="length" value="12" min="0" step="1" oninput="calculate()">
+        </div>
+        <div class="input-field">
+          <label for="width">Width (Inches):</label>
+          <input type="number" id="width" value="12" min="0" step="1" oninput="calculate()">
+        </div>
       </div>
-      <div class="form-group">
-        <label>Target Thickness (mils / 0.001")</label>
-        <input type="number" id="thicknessMils" value="20" min="5" max="50" oninput="calculate()">
+      <div class="input-row">
+        <div class="input-field">
+          <label for="thickness">Thickness (Mils):</label>
+          <input type="number" id="thickness" value="20" min="5" max="60" step="5" oninput="calculate()">
+        </div>
       </div>
-      <div class="form-group">
-        <label>Waste Factor (%)</label>
-        <input type="number" id="wasteFactor" value="15" min="0" max="50" oninput="calculate()">
+
+      <div class="results">
+        <div class="result-row">
+          <span class="result-label">Area:</span>
+          <span class="result-value" id="calcArea">1.00 sq ft</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Estimated Gel Coat Needed:</span>
+          <span class="result-value highlight-value" id="calcOz">1.7 oz</span>
+        </div>
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-      <div class="form-group">
-        <label>Hull Temperature (°F)</label>
-        <input type="number" id="hullTemp" value="70" min="50" max="95" oninput="updateTempRecommendation()">
-        <div class="temp-hint" id="tempHint">Recommended Catalyst: 1.5% MEKP</div>
-      </div>
-      <div class="form-group">
-        <label>Base Gel Coat Color</label>
-        <select id="baseColor" onchange="calculate()">
-          <option value="white">White Base</option>
-          <option value="clear">Clear Base</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>MEKP Catalyst % (Auto / Manual)</label>
-        <input type="number" id="mekpPct" value="1.5" step="0.1" min="1.0" max="2.5" oninput="calculate()">
-      </div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <!-- Section 2: Tint Formulation Sliders -->
-    <div class="card">
-      <div class="card-title">2. Tint Formulation (Your Palette)</div>
+    <!-- 2. TINT SLIDERS & PREVIEW -->
+    <div class="section">
+      <h2>2. Tint Color Mix</h2>
       
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #ffffff;"></div>
-        <span class="color-label">White</span>
-        <div class="slider-container">
-          <input type="range" id="slider-white" min="0" max="100" value="0" oninput="calculate()">
-          <span class="pct-display" id="val-white">0%</span>
+      <div class="input-field" style="margin-bottom: 12px;">
+        <label for="baseAmount">Base Gel Coat Amount (Oz):</label>
+        <input type="number" id="baseAmount" value="1.7" min="0" step="0.1" oninput="calculate()">
+      </div>
+
+      <label style="margin-bottom: 8px;">Tint Ratios (% of Base):</label>
+      
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>White Tint</span>
+          <span id="whiteVal">0%</span>
         </div>
+        <input type="range" id="white" min="0" max="10" value="0" step="0.1" oninput="calculate()">
+        <div class="color-bar bar-white"></div>
       </div>
 
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #d2b48c;"></div>
-        <span class="color-label">Tan</span>
-        <div class="slider-container">
-          <input type="range" id="slider-tan" min="0" max="100" value="0" oninput="calculate()">
-          <span class="pct-display" id="val-tan">0%</span>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Black Tint</span>
+          <span id="blackVal">0%</span>
         </div>
+        <input type="range" id="black" min="0" max="10" value="0" step="0.1" oninput="calculate()">
+        <div class="color-bar bar-black"></div>
       </div>
 
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #facc15;"></div>
-        <span class="color-label">Yellow</span>
-        <div class="slider-container">
-          <input type="range" id="slider-yellow" min="0" max="100" value="10" oninput="calculate()">
-          <span class="pct-display" id="val-yellow">10%</span>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Yellow Tint</span>
+          <span id="yellowVal">0%</span>
         </div>
+        <input type="range" id="yellow" min="0" max="10" value="0" step="0.1" oninput="calculate()">
+        <div class="color-bar bar-yellow"></div>
       </div>
 
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #2563eb;"></div>
-        <span class="color-label">Blue</span>
-        <div class="slider-container">
-          <input type="range" id="slider-blue" min="0" max="100" value="5" oninput="calculate()">
-          <span class="pct-display" id="val-blue">5%</span>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Brown Tint</span>
+          <span id="brownVal">0%</span>
         </div>
+        <input type="range" id="brown" min="0" max="10" value="0" step="0.1" oninput="calculate()">
+        <div class="color-bar bar-brown"></div>
       </div>
 
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #dc2626;"></div>
-        <span class="color-label">Red</span>
-        <div class="slider-container">
-          <input type="range" id="slider-red" min="0" max="100" value="10" oninput="calculate()">
-          <span class="pct-display" id="val-red">10%</span>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Blue Tint</span>
+          <span id="blueVal">0%</span>
         </div>
+        <input type="range" id="blue" min="0" max="10" value="0" step="0.1" oninput="calculate()">
+        <div class="color-bar bar-blue"></div>
       </div>
 
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #000000;"></div>
-        <span class="color-label">Black</span>
-        <div class="slider-container">
-          <input type="range" id="slider-black" min="0" max="100" value="5" oninput="calculate()">
-          <span class="pct-display" id="val-black">5%</span>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Red Tint</span>
+          <span id="redVal">0%</span>
         </div>
+        <input type="range" id="red" min="0" max="10" value="0" step="0.1" oninput="calculate()">
+        <div class="color-bar bar-red"></div>
       </div>
 
-      <div class="slider-row">
-        <div class="color-swatch" style="background: #16a34a;"></div>
-        <span class="color-label">Green</span>
-        <div class="slider-container">
-          <input type="range" id="slider-green" min="0" max="100" value="10" oninput="calculate()">
-          <span class="pct-display" id="val-green">10%</span>
+      <!-- Color Sample Box -->
+      <label style="margin-top: 12px;">Estimated Color Preview:</label>
+      <div id="colorPreview" class="color-sample-box">Preview</div>
+
+      <!-- Workable Measurements Output -->
+      <div class="results" style="margin-top: 12px;">
+        <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px;">
+          Mix Measurements (Drops / Grams)
         </div>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn-primary" onclick="calculate()">Recalculate Mix</button>
-      </div>
-    </div>
-
-    <!-- Section 3 & 4: Output & Batch Results -->
-    <div>
-      <div class="card" style="margin-bottom: 20px;">
-        <div class="card-title">3. Final Mix Color & Analysis</div>
-        <label>Active Color Mix Shade</label>
-        <div id="colorPreview" class="color-preview"></div>
-        <div class="analysis-text"><strong>RGB value:</strong> <span id="rgbValue">(0, 0, 0)</span></div>
-        <div class="analysis-text"><strong>Total Pigment Load:</strong> <span id="pigmentLoad">0%</span> (by weight)</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">4. Batch & Cure Time Results</div>
-        <table class="results-table">
-          <tr><td>Calculated Gel Coat Needed</td><td class="val-col" id="resFluidOz">0.0 fl oz</td></tr>
-          <tr><td>Base Resin Weight (lbs)</td><td class="val-col" id="resBaseWeight">0.00</td></tr>
-          <tr><td>Total Tint Paste Weight (g)</td><td class="val-col" id="resTintWeight">0.00</td></tr>
-          <tbody id="pigmentBreakdown"></tbody>
-          <tr style="border-top: 1px dashed var(--border);"><td>MEKP Catalyst (ml / cc)</td><td class="val-col" id="resMekpMl">0.0</td></tr>
-          <tr><td>MEKP Drop Count Estimate</td><td class="val-col" id="resMekpDrops">0</td></tr>
-          
-          <!-- Cure & Kick Estimates -->
-          <tr class="highlight-row" style="border-top: 2px solid var(--border);">
-            <td>Estimated Pot Life (In Cup)</td>
-            <td class="val-col" id="resPotLife" style="color: #dc2626;">0 mins</td>
-          </tr>
-          <tr class="highlight-row">
-            <td>Estimated Working Time (On Hull)</td>
-            <td class="val-col" id="resWorkingTime" style="color: #2563eb;">0 mins</td>
-          </tr>
-        </table>
-
-        <div class="btn-group">
-          <button class="btn-primary" onclick="calculate()">Recalculate Mix</button>
-          <button class="btn-secondary" onclick="alert('Formula Saved!')">Save Formula</button>
-          <button class="btn-secondary" onclick="resetForm()">Reset</button>
+        <div class="result-row">
+          <span class="result-label">White Tint:</span>
+          <span class="result-value" id="whiteOutput">0 drops (0.0 g)</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Black Tint:</span>
+          <span class="result-value" id="blackOutput">0 drops (0.0 g)</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Yellow Tint:</span>
+          <span class="result-value" id="yellowOutput">0 drops (0.0 g)</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Brown Tint:</span>
+          <span class="result-value" id="brownOutput">0 drops (0.0 g)</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Blue Tint:</span>
+          <span class="result-value" id="blueOutput">0 drops (0.0 g)</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Red Tint:</span>
+          <span class="result-value" id="redOutput">0 drops (0.0 g)</span>
         </div>
       </div>
     </div>
+
+    <!-- 3. MEKP CATALYST CALCULATOR -->
+    <div class="section">
+      <h2>3. MEKP Catalyst & Cure</h2>
+      
+      <div class="input-row">
+        <div class="input-field">
+          <label for="temperature">Shop Temp (°F):</label>
+          <input type="number" id="temperature" value="70" min="50" max="100" step="1" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <span class="result-label">Recommended MEKP Ratio:</span>
+          <span class="result-value" id="mekpRatio">1.5%</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">MEKP Volume (cc / ml):</span>
+          <span class="result-value highlight-value" id="mekpCc">0.0 cc</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">MEKP Drops (~20 drops/cc):</span>
+          <span class="result-value highlight-value" id="mekpDrops">0 drops</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Est. Pot Life (Working Time):</span>
+          <span class="result-value" id="potLife">15 - 20 mins</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Est. Gel / Cure Time:</span>
+          <span class="result-value" id="cureTime">45 - 60 mins</span>
+        </div>
+      </div>
+    </div>
+
   </div>
-</div>
 
-<script>
-  // Pigment RGB profiles
-  const PIGMENT_PROFILES = {
-    white:  { r: 255, g: 255, b: 255 },
-    tan:    { r: 210, g: 180, b: 140 },
-    yellow: { r: 255, g: 225, b: 0   },
-    blue:   { r: 0,   g: 80,  b: 220 },
-    red:    { r: 220, g: 20,  b: 20  },
-    black:  { r: 20,  g: 20,  b: 20  },
-    green:  { r: 20,  g: 150, b: 50  }
-  };
+  <script>
+    // Standard shop liquid tint calibration: ~20 drops = 1 cc / 1 ml (~1 gram)
+    // 1 fl oz gel coat = ~30 grams
+    const GRAMS_PER_OZ = 30;
+    const DROPS_PER_GRAM = 20;
 
-  function updateTempRecommendation() {
-    const temp = parseFloat(document.getElementById('hullTemp').value) || 70;
-    let recMekp = 1.5;
+    function calculate() {
+      // 1. Area & Coverage Calculation
+      const length = parseFloat(document.getElementById('length').value) || 0;
+      const width = parseFloat(document.getElementById('width').value) || 0;
+      const mils = parseFloat(document.getElementById('thickness').value) || 20;
 
-    // Adjust MEKP % based on hull working temperature
-    if (temp < 60) {
-      recMekp = 2.2;
-    } else if (temp < 68) {
-      recMekp = 1.8;
-    } else if (temp <= 77) {
-      recMekp = 1.5;
-    } else if (temp <= 85) {
-      recMekp = 1.2;
-    } else {
-      recMekp = 1.0;
+      const sqFt = (length * width) / 144;
+      const ozNeeded = sqFt * (mils / 12);
+
+      document.getElementById('calcArea').innerText = sqFt.toFixed(2) + ' sq ft';
+      document.getElementById('calcOz').innerText = ozNeeded.toFixed(1) + ' oz';
+
+      // 2. Tint Calculations
+      const baseOz = parseFloat(document.getElementById('baseAmount').value) || 0;
+
+      const whitePct = parseFloat(document.getElementById('white').value) || 0;
+      const blackPct = parseFloat(document.getElementById('black').value) || 0;
+      const yellowPct = parseFloat(document.getElementById('yellow').value) || 0;
+      const brownPct = parseFloat(document.getElementById('brown').value) || 0;
+      const bluePct = parseFloat(document.getElementById('blue').value) || 0;
+      const redPct = parseFloat(document.getElementById('red').value) || 0;
+
+      document.getElementById('whiteVal').innerText = whitePct.toFixed(1) + '%';
+      document.getElementById('blackVal').innerText = blackPct.toFixed(1) + '%';
+      document.getElementById('yellowVal').innerText = yellowPct.toFixed(1) + '%';
+      document.getElementById('brownVal').innerText = brownPct.toFixed(1) + '%';
+      document.getElementById('blueVal').innerText = bluePct.toFixed(1) + '%';
+      document.getElementById('redVal').innerText = redPct.toFixed(1) + '%';
+
+      formatTintOutput('whiteOutput', baseOz, whitePct);
+      formatTintOutput('blackOutput', baseOz, blackPct);
+      formatTintOutput('yellowOutput', baseOz, yellowPct);
+      formatTintOutput('brownOutput', baseOz, brownPct);
+      formatTintOutput('blueOutput', baseOz, bluePct);
+      formatTintOutput('redOutput', baseOz, redPct);
+
+      updateColorPreview(whitePct, blackPct, yellowPct, brownPct, bluePct, redPct);
+
+      // 3. MEKP Catalyst Calculation
+      const temp = parseFloat(document.getElementById('temperature').value) || 70;
+      let mekpRatioPct = 1.5;
+      let potLifeText = "15 - 20 mins";
+      let cureTimeText = "45 - 60 mins";
+
+      if (temp < 65) {
+        mekpRatioPct = 2.0;
+        potLifeText = "20 - 25 mins";
+        cureTimeText = "60 - 90 mins";
+      } else if (temp >= 65 && temp <= 75) {
+        mekpRatioPct = 1.5;
+        potLifeText = "15 - 20 mins";
+        cureTimeText = "45 - 60 mins";
+      } else if (temp > 75 && temp <= 85) {
+        mekpRatioPct = 1.25;
+        potLifeText = "10 - 15 mins";
+        cureTimeText = "30 - 45 mins";
+      } else {
+        mekpRatioPct = 1.0;
+        potLifeText = "8 - 12 mins";
+        cureTimeText = "20 - 30 mins";
+      }
+
+      const mekpCc = baseOz * GRAMS_PER_OZ * (mekpRatioPct / 100);
+      const mekpDrops = Math.round(mekpCc * DROPS_PER_GRAM);
+
+      document.getElementById('mekpRatio').innerText = mekpRatioPct.toFixed(2) + '%';
+      document.getElementById('mekpCc').innerText = mekpCc.toFixed(1) + ' cc';
+      document.getElementById('mekpDrops').innerText = mekpDrops + ' drops';
+      document.getElementById('potLife').innerText = potLifeText;
+      document.getElementById('cureTime').innerText = cureTimeText;
     }
 
-    document.getElementById('mekpPct').value = recMekp.toFixed(1);
-    document.getElementById('tempHint').innerText = `Hull Temp Recommendation: ${recMekp.toFixed(1)}% MEKP`;
+    function formatTintOutput(elementId, baseOz, pct) {
+      // Calculate weight of tint based on base batch volume and percentage
+      const tintOz = baseOz * (pct / 100);
+      const grams = tintOz * GRAMS_PER_OZ;
+      const drops = Math.round(grams * DROPS_PER_GRAM);
+
+      if (grams === 0) {
+        document.getElementById(elementId).innerText = "0 drops (0.0 g)";
+      } else if (grams < 0.5) {
+        document.getElementById(elementId).innerText = `${drops} drops (${grams.toFixed(2)} g / ${tintOz.toFixed(3)} oz)`;
+      } else {
+        document.getElementById(elementId).innerText = `${drops} drops (${grams.toFixed(1)} g / ${tintOz.toFixed(2)} oz)`;
+      }
+    }
+
+    function updateColorPreview(w, b, y, br, bl, r) {
+      let redVal = 240, greenVal = 240, blueVal = 235;
+
+      redVal += (w * 2) - (b * 18) + (y * 2) - (br * 6) - (bl * 15) + (r * 18);
+      greenVal += (w * 2) - (b * 18) + (y * 1) - (br * 10) - (bl * 10) - (r * 15);
+      blueVal += (w * 2) - (b * 18) - (y * 15) - (br * 14) + (bl * 20) - (r * 15);
+
+      redVal = Math.min(255, Math.max(0, Math.round(redVal)));
+      greenVal = Math.min(255, Math.max(0, Math.round(greenVal)));
+      blueVal = Math.min(255, Math.max(0, Math.round(blueVal)));
+
+      const previewBox = document.getElementById('colorPreview');
+      previewBox.style.backgroundColor = `rgb(${redVal}, ${greenVal}, ${blueVal})`;
+    }
+
     calculate();
-  }
-
-  function calculate() {
-    // 1. Coverage & Resin Volume Calculation
-    const areaSqFt = parseFloat(document.getElementById('surfaceArea').value) || 0;
-    const mils = parseFloat(document.getElementById('thicknessMils').value) || 0;
-    const wastePct = parseFloat(document.getElementById('wasteFactor').value) || 0;
-
-    const netFluidOz = areaSqFt * mils * 0.08021;
-    const totalFluidOz = netFluidOz * (1 + (wastePct / 100));
-
-    document.getElementById('resFluidOz').innerText = `${totalFluidOz.toFixed(1)} fl oz`;
-
-    // 2. Gather Pigment Values
-    const pigments = {
-      white:  parseFloat(document.getElementById('slider-white').value) || 0,
-      tan:    parseFloat(document.getElementById('slider-tan').value) || 0,
-      yellow: parseFloat(document.getElementById('slider-yellow').value) || 0,
-      blue:   parseFloat(document.getElementById('slider-blue').value) || 0,
-      red:    parseFloat(document.getElementById('slider-red').value) || 0,
-      black:  parseFloat(document.getElementById('slider-black').value) || 0,
-      green:  parseFloat(document.getElementById('slider-green').value) || 0
-    };
-
-    for (let key in pigments) {
-      document.getElementById(`val-${key}`).innerText = `${pigments[key]}%`;
-    }
-
-    const totalPigmentPct = Object.values(pigments).reduce((a, b) => a + b, 0);
-    document.getElementById('pigmentLoad').innerText = `${totalPigmentPct.toFixed(1)}%`;
-
-    // 3. Compute Color Shade Blending
-    const baseType = document.getElementById('baseColor').value;
-    let baseR = baseType === 'white' ? 255 : 220;
-    let baseG = baseType === 'white' ? 255 : 220;
-    let baseB = baseType === 'white' ? 255 : 220;
-
-    let targetR = baseR;
-    let targetG = baseG;
-    let targetB = baseB;
-
-    if (totalPigmentPct > 0) {
-      let mixedR = 0, mixedG = 0, mixedB = 0;
-      for (let key in pigments) {
-        let weight = pigments[key] / totalPigmentPct;
-        mixedR += PIGMENT_PROFILES[key].r * weight;
-        mixedG += PIGMENT_PROFILES[key].g * weight;
-        mixedB += PIGMENT_PROFILES[key].b * weight;
-      }
-
-      let tintFactor = Math.min(totalPigmentPct / 30, 1.0);
-      targetR = Math.round(baseR * (1 - tintFactor) + mixedR * tintFactor);
-      targetG = Math.round(baseG * (1 - tintFactor) + mixedG * tintFactor);
-      targetB = Math.round(baseB * (1 - tintFactor) + mixedB * tintFactor);
-    }
-
-    const rgbStr = `rgb(${targetR}, ${targetG}, ${targetB})`;
-    document.getElementById('colorPreview').style.backgroundColor = rgbStr;
-    document.getElementById('rgbValue').innerText = `(${targetR}, ${targetG}, ${targetB})`;
-
-    // 4. Batch & Weight Calculations
-    const totalBatchWeightGrams = totalFluidOz * 36.9;
-    const baseResinGrams = totalBatchWeightGrams * (1 - (totalPigmentPct / 100));
-    const totalTintGrams = totalBatchWeightGrams * (totalPigmentPct / 100);
-
-    document.getElementById('resBaseWeight').innerText = (baseResinGrams / 453.592).toFixed(3);
-    document.getElementById('resTintWeight').innerText = totalTintGrams.toFixed(2);
-
-    // 5. MEKP Catalyst Calculation
-    const mekpVal = parseFloat(document.getElementById('mekpPct').value) || 1.5;
-    const mekpPct = mekpVal / 100;
-    const totalVolumeMl = totalFluidOz * 29.5735;
-    const mekpMl = totalVolumeMl * mekpPct;
-    const mekpDrops = Math.round(mekpMl * 20);
-
-    document.getElementById('resMekpMl').innerText = mekpMl.toFixed(2);
-    document.getElementById('resMekpDrops').innerText = mekpDrops;
-
-    // 6. Time Until Kick / Gel Life Calculations
-    const tempF = parseFloat(document.getElementById('hullTemp').value) || 70;
-    
-    // Base pot life at 77°F with 1.5% MEKP is ~15-18 mins
-    // Temperature factor (Arrhenius rule of thumb: rate doubles/halves roughly every 15-18°F)
-    const tempFactor = Math.pow(2, (77 - tempF) / 15); 
-    const mekpFactor = 1.5 / mekpVal;
-
-    let basePotLifeMinutes = 16 * tempFactor * mekpFactor;
-    let workingTimeMinutes = basePotLifeMinutes * 1.5; // Spread thin on hull dissipates mass heat
-
-    // Clamp values within reasonable physical ranges
-    basePotLifeMinutes = Math.max(5, Math.min(60, basePotLifeMinutes));
-    workingTimeMinutes = Math.max(8, Math.min(90, workingTimeMinutes));
-
-    document.getElementById('resPotLife').innerText = `~${Math.round(basePotLifeMinutes)} mins`;
-    document.getElementById('resWorkingTime').innerText = `~${Math.round(workingTimeMinutes)} mins`;
-
-    // Dynamic Pigment Breakdown Rows
-    const breakdownTbody = document.getElementById('pigmentBreakdown');
-    breakdownTbody.innerHTML = '';
-    for (let key in pigments) {
-      if (pigments[key] > 0) {
-        let pGrams = totalPigmentPct > 0 ? (totalTintGrams * (pigments[key] / totalPigmentPct)) : 0;
-        let capitalName = key.charAt(0).toUpperCase() + key.slice(1);
-        let row = `<tr><td>${capitalName} Pigment (g)</td><td class="val-col">${pGrams.toFixed(2)}</td></tr>`;
-        breakdownTbody.innerHTML += row;
-      }
-    }
-  }
-
-  function resetForm() {
-    document.getElementById('surfaceArea').value = 10;
-    document.getElementById('thicknessMils').value = 20;
-    document.getElementById('wasteFactor').value = 15;
-    document.getElementById('hullTemp').value = 70;
-    
-    document.querySelectorAll('input[type="range"]').forEach(input => input.value = 0);
-    document.getElementById('slider-yellow').value = 10;
-    document.getElementById('slider-blue').value = 5;
-    document.getElementById('slider-red').value = 10;
-    document.getElementById('slider-black').value = 5;
-    document.getElementById('slider-green').value = 10;
-    
-    updateTempRecommendation();
-  }
-
-  // Initialize
-  updateTempRecommendation();
-</script>
-
+  </script>
 </body>
 </html>
